@@ -25,7 +25,7 @@ except ImportError:
 
 from . import logger
 from . import connection_http
-from .connection_http import connect as http_connect
+# from .connection_http import connect as http_connect
 from .convert_errors import raise_if_error
 #from .decorators import deprecated
 from .exceptions import ElasticSearchException, ReduceSearchPhaseException, \
@@ -351,9 +351,9 @@ class ES(object):
 
         server = random.choice(self.servers)
         if server.scheme in ["http", "https"]:
-            self.connection = http_connect(
-                [server for server in self.servers if server.scheme in ["http", "https"]],
-                timeout=self.timeout, basic_auth=self.basic_auth, max_retries=self.max_retries, retry_time=self.retry_time)
+            # self.connection = http_connect(
+            #     [server for server in self.servers if server.scheme in ["http", "https"]],
+            #     timeout=self.timeout, basic_auth=self.basic_auth, max_retries=self.max_retries, retry_time=self.retry_time)
             return
         elif server.scheme == "thrift":
             self.connection = thrift_connect(
