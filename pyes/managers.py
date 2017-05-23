@@ -558,12 +558,12 @@ class Cluster(object):
             if level not in ["cluster", "indices", "shards"]:
                 raise ValueError("Invalid level: %s" % level)
             mapping['level'] = level
-        if wait_for_status:
-            if wait_for_status not in ["green", "yellow", "red"]:
-                raise ValueError("Invalid wait_for_status: %s" % wait_for_status)
-            mapping['wait_for_status'] = wait_for_status
+        # if wait_for_status:
+        #     if wait_for_status not in ["green", "yellow", "red"]:
+        #         raise ValueError("Invalid wait_for_status: %s" % wait_for_status)
+        #     mapping['wait_for_status'] = wait_for_status
 
-            mapping['timeout'] = "%ds" % timeout
+        #     mapping['timeout'] = "%ds" % timeout
         return self.conn._send_request('GET', path, params=mapping)
 
     def state(self, filter_nodes=None, filter_routing_table=None,

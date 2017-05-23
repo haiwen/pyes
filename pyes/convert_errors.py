@@ -39,6 +39,9 @@ exception_patterns_trailing = {
     '] Already exists': exceptions.AlreadyExistsException,
     }
 
+def to_camel_case(s):
+    return ''.join([part.capitalize() for part in s.split('_')])
+
 def raise_if_error(status, result, request=None):
     """Raise an appropriate exception if the result is an error.
 
@@ -60,6 +63,7 @@ def raise_if_error(status, result, request=None):
         return
 
     if status == 404 and isinstance(result, dict) and 'error' not in result:
+        # import pudb; pudb.set_trace()
         raise exceptions.NotFoundException("Item not found", status, result, request)
 
     if not isinstance(result, dict) or 'error' not in result:
@@ -67,6 +71,17 @@ def raise_if_error(status, result, request=None):
             result, request)
 
     error = result['error']
+
+    if isinstance(error, dict) and 'type' in error:
+        etype = error['type']
+        excClass = exceptions_by_name.get(etype, None) or exceptions_by_name.get(to_camel_case(etype), None)
+        if not excClass:
+            etype = to_camel_case(etype)
+            excClass = exceptions_by_name.get(etype, None)
+        if excClass:
+            msg = str(error.get('root_cause', '') or error.get('reason', ''))
+            raise excClass(msg, status, result, request)
+
     if '; nested: ' in error:
         error_list = error.split('; nested: ')
         error = error_list[len(error_list) - 1]
